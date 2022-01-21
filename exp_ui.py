@@ -38,7 +38,7 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
             event.setDropAction(QtCore.Qt.CopyAction)
             event.accept()
             for url in event.mimeData().urls():
-                self.listWidget.addItem(str(url.toLocalFile()))
+                self.listWidget.addItem(url.toLocalFile())
         else:
             event.ignore()
 

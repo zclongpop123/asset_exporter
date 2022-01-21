@@ -4,7 +4,15 @@
 #      time: Thu Jan 20 17:05:09 2022
 #========================================
 import os
+import logging
 #--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+logging.basicConfig(filename = 'D:/test.log',
+                    filemode = 'w',
+                    level = logging.INFO,
+                    format = '[%(asctime)s][%(levelname)s] - %(message)s')
+
+logger = logging.getLogger()
+
 def main(file_list):
     '''
     '''
@@ -13,7 +21,7 @@ def main(file_list):
     try:
         import maya.standalone
         maya.standalone.initialize(name='python')
-    except: 			
+    except:
         return
 
 

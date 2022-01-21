@@ -5,8 +5,12 @@
 #========================================
 import re
 import os
+import logging
 import maya.cmds as mc
 #--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+logger = logging.getLogger()
+
+
 def load_plugin(plugin_name):
     '''
     '''
@@ -91,7 +95,12 @@ def export(filePath):
     if not os.path.isfile(filePath):
         return
 
-    mc.file(filePath, o=True, f=True)
+    logger.info(filePath)
+    try:
+        mc.file(filePath, o=True, f=True)
+    except RuntimeError as e:
+        logger.info('Exception occurred', exc_info=True)
+
     start_frame = int(mc.playbackOptions(q=True, ast=True))
     end_frame   = int(mc.playbackOptions(q=True, aet=True))
 
