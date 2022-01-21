@@ -40,26 +40,6 @@
       <property name="selectionMode">
        <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>
-      <item>
-       <property name="text">
-        <string>abc</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>def</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>ghi</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>D:/work/asset_exporter/example/test_scene.ma</string>
-       </property>
-      </item>
      </widget>
     </item>
     <item>
