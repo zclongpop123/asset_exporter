@@ -71,7 +71,7 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
         '''
         file_list = [self.listWidget.item(i).text() for i in range(self.listWidget. count())]
         exp_app.main(file_list)
-
+        QtWidgets.QMessageBox.about(None, 'Result', 'Export Finished ! !')
 
 
 
