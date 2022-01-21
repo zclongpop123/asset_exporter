@@ -69,6 +69,10 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
     def on_btn_export_clicked(self, args):
         '''
         '''
+        result = QtWidgets.QMessageBox.question(self, 'confilm', 'Start to export ? ? ?')
+        if result == QtWidgets.QMessageBox.StandardButton.No:
+            return
+
         file_list = [self.listWidget.item(i).text() for i in range(self.listWidget. count())]
         exp_app.main(file_list)
         QtWidgets.QMessageBox.about(None, 'Result', 'Export Finished ! !')
