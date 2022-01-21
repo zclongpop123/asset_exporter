@@ -11,6 +11,8 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
     '''
     '''
     def __init__(self, parent=None):
+        '''
+        '''
         super(ExportUI, self).__init__(parent)
         self.setupUi(self)
 

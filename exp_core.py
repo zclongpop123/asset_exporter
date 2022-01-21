@@ -19,6 +19,24 @@ def load_plugin(plugin_name):
 
 
 
+def back_cameras(camera_name, start_frame, end_frame):
+    '''
+    '''
+    temp_loc = mc.spaceLocator()[0]
+    cons_node = mc.parentConstraint(camera_name, temp_loc)
+    mc.bakeResults(temp_loc, t=(start_frame, end_frame), hi='below', simulation=True)
+    mc.delete(cons_node)
+
+    try:
+        mc.parent(camera_name, w=True)
+    except:
+        pass
+    mc.parentConstraint(temp_loc, camera_name)
+    mc.bakeResults(camera_name, t=(start_frame, end_frame), hi='below', simulation=True)
+
+
+
+
 def export_camera(filePath, start_frame, end_frame):
     '''
     '''
@@ -28,6 +46,9 @@ def export_camera(filePath, start_frame, end_frame):
     cameras = [cam for cam in cameras if cam not in ('|front', '|persp', '|side', '|top')]
     if not cameras:
         cameras.append(mc.camera()[0])
+
+    for cam in cameras:
+        back_cameras(cam, start_frame, end_frame)
 
     file_name = os.path.splitext(filePath)[0]
     output_path = '{0}_export_cam_{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
@@ -60,6 +81,7 @@ def export_assets(filePath, start_frame, end_frame):
         output_path = '{0}_export_{1}_{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
         mc.select(asset_grp, r=True)
         mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
+
 
 
 
