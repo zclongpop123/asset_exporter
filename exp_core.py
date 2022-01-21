@@ -24,7 +24,7 @@ def load_plugin(plugin_name):
 
 
 
-def back_cameras(camera_name, start_frame, end_frame):
+def bake_cameras(camera_name, start_frame, end_frame):
     '''
     '''
     temp_loc = mc.spaceLocator()[0]
@@ -50,10 +50,11 @@ def export_camera(filePath, start_frame, end_frame):
     cameras = mc.listRelatives(mc.ls(ca=True), p=True, fullPath=True)
     cameras = [cam for cam in cameras if cam not in ('|front', '|persp', '|side', '|top')]
     if not cameras:
-        cameras.append(mc.camera()[0])
+        logger.info('Can not find cameras.')
+        return
 
     for cam in cameras:
-        back_cameras(cam, start_frame, end_frame)
+        bake_cameras(cam, start_frame, end_frame)
 
     file_name = os.path.splitext(filePath)[0]
     output_path = u'{0}_export_cam_{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
