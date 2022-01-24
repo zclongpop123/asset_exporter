@@ -1,14 +1,14 @@
-//Maya ASCII 2019 scene
+//Maya ASCII 2018ff09 scene
 //Name: ball.ma
-//Last modified: Fri, Jan 21, 2022 10:40:43 AM
+//Last modified: Mon, Jan 24, 2022 11:18:38 AM
 //Codeset: 936
-requires maya "2019";
+requires maya "2018ff09";
 currentUnit -l centimeter -a degree -t film;
 fileInfo "application" "maya";
-fileInfo "product" "Maya 2019";
-fileInfo "version" "2019";
-fileInfo "cutIdentifier" "201812112215-434d8d9c04";
-fileInfo "osv" "Microsoft Windows 10 Technical Preview  (Build 22000)\n";
+fileInfo "product" "Maya 2018";
+fileInfo "version" "2018";
+fileInfo "cutIdentifier" "201903222215-65bada0e52";
+fileInfo "osv" "Microsoft Windows 8 Business Edition, 64-bit  (Build 9200)\n";
 createNode transform -n "UE4";
 	rename -uid "1884538D-4B0D-55BA-53B7-E2839EFD27E4";
 createNode transform -n "pSphere1" -p "UE4";
