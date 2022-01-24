@@ -8,6 +8,7 @@ import re
 import os
 import logging
 import maya.cmds as mc
+import pymel.core as pm
 #--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 logger = logging.getLogger()
 
@@ -27,17 +28,18 @@ def load_plugin(plugin_name):
 def bake_cameras(camera_name, start_frame, end_frame):
     '''
     '''
-    temp_loc = mc.spaceLocator()[0]
-    cons_node = mc.parentConstraint(camera_name, temp_loc)
-    mc.bakeResults(temp_loc, t=(start_frame, end_frame), hi='below', simulation=True)
-    mc.delete(cons_node)
+    cam = pm.PyNode(camera_name)
+    temp_loc = pm.spaceLocator()
+    cons_node = pm.parentConstraint(cam, temp_loc)
+    pm.bakeResults(temp_loc, t=(start_frame, end_frame), hi='below', simulation=True)
+    pm.delete(cons_node)
 
     try:
-        mc.parent(camera_name, w=True)
+        pm.parent(cam, w=True)
     except:
         pass
-    mc.parentConstraint(temp_loc, camera_name)
-    mc.bakeResults(camera_name, t=(start_frame, end_frame), hi='below', simulation=True)
+    pm.parentConstraint(temp_loc, cam)
+    pm.bakeResults(cam, t=(start_frame, end_frame), hi='below', simulation=True)
 
 
 
@@ -47,8 +49,8 @@ def export_camera(filePath, start_frame, end_frame):
     '''
     load_plugin('fbxmaya.mll')
 
-    cameras = mc.listRelatives(mc.ls(ca=True), p=True, fullPath=True)
-    cameras = [cam for cam in cameras if cam not in ('|front', '|persp', '|side', '|top')]
+    cameras = pm.listRelatives(pm.ls(ca=True), p=True, fullPath=True)
+    cameras = [cam for cam in cameras if cam.name() not in ('|front', '|persp', '|side', '|top')]
     if not cameras:
         logger.info('Can not find cameras.')
         return
@@ -59,7 +61,7 @@ def export_camera(filePath, start_frame, end_frame):
     file_name = os.path.splitext(filePath)[0]
     output_path = u'{0}_export_cam_{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
 
-    mc.select(cameras, r=True)
+    pm.select(cameras, r=True)
     mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
 
 
