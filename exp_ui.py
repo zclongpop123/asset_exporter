@@ -4,6 +4,7 @@
 #      time: Thu Jan 20 17:38:45 2022
 #========================================
 import sys
+import glob
 from PySide2 import QtWidgets, QtCore, QtGui
 import exp_widgets, exp_app
 #--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
@@ -44,6 +45,17 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
 
 
 
+    @QtCore.Slot()
+    def on_let_pattrn_editingFinished(self):
+        '''
+        '''
+        pattrn = self.let_pattrn.text()
+        if not pattrn:
+            return
+        self.listWidget.addItems(glob.glob(pattrn))
+
+    
+    
     @QtCore.Slot(QtCore.QPoint)
     def create_context_menu(self, point):
         '''
@@ -74,6 +86,8 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
             return
 
         file_list = [self.listWidget.item(i).text() for i in range(self.listWidget. count())]
+        file_list = [x for i,x in enumerate(file_list) if x not in file_list[:i]]
+        
         exp_app.main(file_list)
         QtWidgets.QMessageBox.about(None, 'Result', 'Export Finished ! !')
 
