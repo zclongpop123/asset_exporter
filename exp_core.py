@@ -59,7 +59,7 @@ def export_camera(filePath, start_frame, end_frame):
         bake_cameras(cam, start_frame, end_frame)
 
     file_name = os.path.splitext(filePath)[0]
-    output_path = u'{0}_export_cam_{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
+    output_path = u'{0}_export_cam.{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
 
     pm.select(cameras, r=True)
     mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
@@ -86,7 +86,7 @@ def export_assets(filePath, start_frame, end_frame):
         else:
             asset_name = os.path.splitext(os.path.basename(asset_path))[0]
 
-        output_path = u'{0}_export_{1}_{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
+        output_path = u'{0}_export_{1}.{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
         mc.select(asset_grp, r=True)
         mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
 
