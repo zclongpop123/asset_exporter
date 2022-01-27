@@ -90,6 +90,7 @@ def export_assets(filePath, start_frame, end_frame):
 
         output_path = u'{0}_export_{1}.{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
         mc.select(asset_grp, r=True)
+        pm.mel.eval('FBXExportBakeComplexAnimation -v true;')
         mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
 
 
