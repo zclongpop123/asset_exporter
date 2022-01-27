@@ -35,9 +35,11 @@ def bake_cameras(camera_name, start_frame, end_frame):
     pm.delete(cons_node)
 
     try:
+        for attr in ('tx', 'ty', 'tz', 'rx', 'ry', 'rz', 'sx', 'sy', 'sz'):
+            cam.attr(attr).setLocked(False)
         pm.parent(cam, w=True)
     except:
-        pass
+        return
     pm.parentConstraint(temp_loc, cam)
     pm.bakeResults(cam, t=(start_frame, end_frame), hi='below', simulation=True)
 
