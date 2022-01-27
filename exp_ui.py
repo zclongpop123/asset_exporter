@@ -49,19 +49,23 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
     def on_let_pattrn_editingFinished(self):
         '''
         '''
+        if self.focusWidget() != self.let_pattrn:
+            return
+
         pattrn = self.let_pattrn.text()
         if not pattrn:
             return
         self.listWidget.addItems(glob.glob(pattrn))
 
-    
-    
+
+
     @QtCore.Slot(QtCore.QPoint)
     def create_context_menu(self, point):
         '''
         '''
         menu = QtWidgets.QMenu(self.listWidget)
         menu.addAction('Remove', self.remove_select_items)
+        menu.addAction('Remove Duplicates', self.remove_duplicates_items)
         menu.addSeparator()
         menu.addAction('Clear', self.listWidget.clear)
         menu.exec_(QtGui.QCursor.pos())
@@ -77,6 +81,23 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
 
 
 
+    def remove_duplicates_items(self):
+        '''
+        '''
+        paths = list()
+        index = list()
+        for i in range(self.listWidget.count()):
+            text = self.listWidget.item(i).text()
+            if text in paths:
+                index.append(i)
+            else:
+                paths.append(text)
+        
+        for row in reversed(index):
+            self.listWidget.takeItem(row)
+
+
+
     @QtCore.Slot(bool)
     def on_btn_export_clicked(self, args):
         '''
@@ -85,9 +106,9 @@ class ExportUI(QtWidgets.QMainWindow, exp_widgets.Ui_MainWindow):
         if result == QtWidgets.QMessageBox.StandardButton.No:
             return
 
-        file_list = [self.listWidget.item(i).text() for i in range(self.listWidget. count())]
+        file_list = [self.listWidget.item(i).text() for i in range(self.listWidget.count())]
         file_list = [x for i,x in enumerate(file_list) if x not in file_list[:i]]
-        
+
         exp_app.main(file_list)
         QtWidgets.QMessageBox.about(None, 'Result', 'Export Finished ! !')
 
