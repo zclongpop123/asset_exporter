@@ -6,6 +6,7 @@
 #========================================
 import re
 import os
+import shutil
 import logging
 import maya.cmds as mc
 import pymel.core as pm
@@ -46,7 +47,7 @@ def bake_cameras(camera_name, start_frame, end_frame):
 
 
 
-def export_camera(filePath, start_frame, end_frame):
+def export_camera(filePath, start_frame, end_frame, out_dir):
     '''
     '''
     load_plugin('fbxmaya.mll')
@@ -60,22 +61,23 @@ def export_camera(filePath, start_frame, end_frame):
     for cam in cameras:
         bake_cameras(cam, start_frame, end_frame)
 
-    file_name = os.path.splitext(filePath)[0]
-    output_path = u'{0}_export_cam.{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
+    file_name = os.path.splitext(os.path.basename(filePath))[0]
+    out_name = u'{0}_export_cam.{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
+    out_path = os.path.join(out_dir, out_name)
 
     pm.select(cameras, r=True)
-    mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
+    mc.file(out_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
 
 
 
 
 
-def export_assets(filePath, start_frame, end_frame):
+def export_assets(filePath, start_frame, end_frame, out_dir):
     '''
     '''
     load_plugin('fbxmaya.mll')
 
-    file_name = os.path.splitext(filePath)[0]
+    file_name = os.path.splitext(os.path.basename(filePath))[0]
     for asset_grp in mc.ls('*::UE4', typ='transform'):
         if not mc.referenceQuery(asset_grp, inr=True):
             continue
@@ -88,10 +90,12 @@ def export_assets(filePath, start_frame, end_frame):
         else:
             asset_name = os.path.splitext(os.path.basename(asset_path))[0]
 
-        output_path = u'{0}_export_{1}.{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
+        out_name = u'{0}_export_{1}.{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
+        out_path = os.path.join(out_dir, out_name)
+
         mc.select(asset_grp, r=True)
         pm.mel.eval('FBXExportBakeComplexAnimation -v true;')
-        mc.file(output_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
+        mc.file(out_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
 
 
 
@@ -111,10 +115,18 @@ def export(filePath):
     start_frame = int(mc.playbackOptions(q=True, ast=True))
     end_frame   = int(mc.playbackOptions(q=True, aet=True))
 
-    export_camera(filePath, start_frame, end_frame)
-    export_assets(filePath, start_frame, end_frame)
+    out_dir = os.path.splitext(filePath)[0]
+    if not os.path.isdir(out_dir):
+        os.makedirs(out_dir)
 
+    export_camera(filePath, start_frame, end_frame, out_dir)
+    export_assets(filePath, start_frame, end_frame, out_dir)
 
+    mov = os.path.splitext(filePath)[0] + '.mov'
+    if os.path.isfile(mov):
+        shutil.move(mov, out_dir)
+
+    shutil.move(filePath, out_dir)
 
 
 if __name__ == '__main__':
