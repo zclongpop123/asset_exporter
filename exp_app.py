@@ -5,6 +5,7 @@
 #========================================
 import os
 import logging
+import traceback
 #--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 logging.basicConfig(filename = os.path.expanduser('~/asset_exporter.log'),
                     filemode = 'w',
@@ -23,13 +24,11 @@ def main(file_list):
         import maya.standalone
         maya.standalone.initialize(name='python')
     except:
-        return
-
+        logger.error(traceback.format_exc())
 
     import exp_core
     for filePath in file_list:
         exp_core.export(filePath)
-
 
     maya.standalone.uninitialize()
 

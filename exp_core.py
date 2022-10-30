@@ -62,7 +62,7 @@ def export_camera(filePath, start_frame, end_frame, out_dir):
         bake_cameras(cam, start_frame, end_frame)
 
     file_name = os.path.splitext(os.path.basename(filePath))[0]
-    out_name = u'{0}_export_cam.{1}-{2}.fbx'.format(file_name, start_frame, end_frame)
+    out_name = u'{0}_camera.fbx'.format(file_name)
     out_path = os.path.join(out_dir, out_name)
 
     pm.select(cameras, r=True)
@@ -78,11 +78,20 @@ def export_assets(filePath, start_frame, end_frame, out_dir):
     load_plugin('fbxmaya.mll')
 
     file_name = os.path.splitext(os.path.basename(filePath))[0]
-    for asset_grp in mc.ls('*::UE4', typ='transform'):
+    for asset_grp in mc.ls('*::DeformationSystem', typ='transform'):
         if not mc.referenceQuery(asset_grp, inr=True):
             continue
 
+        #-
         asset_path = mc.referenceQuery(asset_grp, f=True)
+        mc.file(asset_path, ir=True)
+        mm = mc.xform(asset_grp, q=True, ws=True, m=True)
+        mc.parent(asset_grp, w=True)
+        mc.xform(asset_grp, ws=True, m=mm)
+
+        geo_group = asset_grp.replace('DeformationSystem', 'Geometry')
+        if mc.objExists(geo_group):
+            mc.parent(geo_group, w=True)
 
         count_number = re.search('{\d+}', asset_path)
         if count_number:
@@ -90,10 +99,13 @@ def export_assets(filePath, start_frame, end_frame, out_dir):
         else:
             asset_name = os.path.splitext(os.path.basename(asset_path))[0]
 
-        out_name = u'{0}_export_{1}.{2}-{3}.fbx'.format(file_name, asset_name, start_frame, end_frame)
+        out_name = u'{0}_export_{1}.fbx'.format(file_name, asset_name)
         out_path = os.path.join(out_dir, out_name)
 
         mc.select(asset_grp, r=True)
+        if mc.objExists(geo_group):
+            mc.select(geo_group, add=True)
+
         pm.mel.eval('FBXExportBakeComplexAnimation -v true;')
         mc.file(out_path, options='v=0;', typ='FBX export', pr=True, es=True, force=True)
 
@@ -122,11 +134,11 @@ def export(filePath):
     export_camera(filePath, start_frame, end_frame, out_dir)
     export_assets(filePath, start_frame, end_frame, out_dir)
 
-    mov = os.path.splitext(filePath)[0] + '.mov'
-    if os.path.isfile(mov):
-        shutil.move(mov, out_dir)
+    #mov = os.path.splitext(filePath)[0] + '.mov'
+    #if os.path.isfile(mov):
+    #    shutil.move(mov, out_dir)
 
-    shutil.move(filePath, out_dir)
+    #shutil.move(filePath, out_dir)
 
 
 if __name__ == '__main__':
